@@ -1,507 +1,74 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <title>Live Stream</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="https://kit.fontawesome.com/9d6352f212.js" crossorigin="anonymous"></script>
+        <link rel="icon" type="image/x-icon" href="images/favicon.ico" />
+        <link rel="stylesheet" href="assets/whistler.css" type="text/css" />
+        <!-- Bootstrap CSS (v5) -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    </head>
 
-<head>
-    <title>Whistler Stream</title>
-    <meta charset="utf-8">
-    <!-- <meta http-equiv="refresh" content="1800"> -->
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://kit.fontawesome.com/9d6352f212.js" crossorigin="anonymous"></script>
-    <link rel="icon" type="image/x-icon" href="images/favicon.ico" />
-    <link rel="stylesheet" href="assets/whistler.css" type="text/css" />
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-</head>
+    <body>
+        
+        <!-- Navbar -->
+        <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">
+                    <img src="images/logo.svg" width="30" height="30" alt="">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav">
+                    <a class="nav-link active" aria-current="page" href="index.html">Live</a>
+                    <a class="nav-link" href="whistler.html">Whistler</a>
+                    <a class="nav-link" href="blackcomb.html">Blackcomb</a>
+                    <a class="nav-link" href="travel.html">Travel</a>
+                    <a class="nav-link" href="https://secure.whistlerblackcomb.com/TomPDF/Default.aspx?Season=1&Type=bg"><i class="fa-solid fa-cloud-arrow-down"></i>&nbspSnow Report</a>
+                </div>
+                </div>
+            </div>
+        </nav>
 
-<body>
+        <!-- Main content -->
+        <div id="content">
 
-    <nav class="navbar navbar-dark bg-dark">
-        <div class="nav nav-tabs" id="nav-tab" role="tablist" style="border-bottom: none;">
-            <a class="navbar-brand" href="https://geocoug.github.io">
-                <img src="images/favicon.jpg" width="30" height="30" alt="geocoug">
-                geocoug
-            </a>
-            <a class="nav-item nav-link btn btn-dark active" id="nav-live-tab" data-toggle="tab" href="#nav-live" role="tab" aria-controls="nav-live" aria-selected="true">Live Stream</a>
-            <a class="nav-item nav-link btn btn-dark" id="nav-whistler-tab" data-toggle="tab" href="#nav-whistler" role="tab" aria-controls="nav-whistler" aria-selected="false">Whistler Cams</a>
-            <a class="nav-item nav-link btn btn-dark" id="nav-blackcomb-tab" data-toggle="tab" href="#nav-blackcomb" role="tab" aria-controls="nav-blackcomb" aria-selected="false">Blackcomb Cams</a>
-            <a class="nav-item nav-link btn btn-dark" id="nav-travel-tab" data-toggle="tab" href="#nav-travel" role="tab" aria-controls="nav-travel" aria-selected="false">WA/BC travel</a>
-        </div>
-        <span class="navbar-text"><a class="btn btn-dark" href="https://secure.whistlerblackcomb.com/TomPDF/Default.aspx?Season=1&Type=bg">Download Snow Report</a></span>
-    </nav>
-
-    <center>
-        <div class="tab-content" id="nav-tabContent">
-
-
-            <!--https://weatherwidget.io/-->
+            <!-- Weather widget -->
             <div>
                 <a class="weatherwidget-io" href="https://forecast7.com/en/50d12n122d96/whistler/?unit=us" data-label_1="WHISTLER" data-label_2="WEATHER" data-theme="weather_one" >WHISTLER WEATHER</a>
                 <script>
                 !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src='https://weatherwidget.io/js/widget.min.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','weatherwidget-io-js');
                 </script>
             </div>
-
-
-            <div class="tab-pane fade show active" id="nav-live" role="tabpanel" aria-labelledby="nav-live-tab">
-
-                <div class="content-section" style="display:block; background-color:#ddd;">
-
-                    <div class="row justify-content-center">
-                        <div class="col-lg-6 video-container">
-                            <iframe class="video-frame" src="https://www.youtube.com/embed/UrMyKCCgiyw?autoplay=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen align="middle"
-                                frameborder="0"></iframe>
-                        </div>
-                        <div class="col-lg-6 video-container">
-                            <iframe class="video-frame" src="https://www.youtube.com/embed/CMhOAfc81HQ?auoplay=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen align="middle"
-                                frameborder="0"></iframe>
-                        </div>
-                    </div>
-
-                    <div class="row justify-content-center">
-                        <div class="col-lg-8 video-container">
-                            <!-- Map widget -->
-                            <iframe width="100%" height="385" allowfullscreen="" src="https://fatmap.com/activity/pistes/@50.112,-122.9514" frameborder=""></iframe>
-                        </div>
-                    </div>
+            
+            <!-- Videos -->
+            <div class="row justify-content-center">
+                <div class="col-lg-5 p-2">
+                    <iframe width="100%" height="388" src="https://www.youtube.com/embed/UrMyKCCgiyw?autoplay=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen align="middle"
+                        frameborder="0"></iframe>
+                </div>
+                <div class="col-lg-5 p-2">
+                    <iframe width="100%" height="388" src="https://www.youtube.com/embed/CMhOAfc81HQ?auoplay=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen align="middle"
+                        frameborder="0"></iframe>
                 </div>
             </div>
 
-
-
-            <div class="tab-pane fade" id="nav-whistler" role="tabpanel" aria-labelledby="nav-whistler-tab">
-
-                <div class="content-section">
-
-                    <div class="row justify-content-center">
-                        <div class="col-lg-4 img-grid" style="background-color:#ddd;">
-                            <a class="img-link" href="https://common.snow.com/mtncams/roundhouse2.jpg" target="_blank">
-                                <img src="https://common.snow.com/mtncams/roundhouse2.jpg" style="width:100%" loading="lazy" alt="loading...">
-                                <div class="text">Roundhouse</div>
-                            </a>
-                        </div>
-
-                        <div class="col-lg-4 img-grid" style="background-color:#ddd;">
-                            <a class="img-link" href="https://common.snow.com/Mtncams/creek.jpg" target="_blank">
-                                <img src="https://common.snow.com/Mtncams/creek.jpg" style="width:100%" loading="lazy" alt="loading...">
-                                <div class="text">Creekside</div>
-                            </a>
-                        </div>
-
-                        <div class="col-lg-4 img-grid" style="background-color:#ddd;">
-                            <a class="img-link" href="https://common.snow.com/mtncams/wbsnowstake.jpg" target="_blank">
-                                <img src="https://common.snow.com/mtncams/wbsnowstake.jpg" style="width:100%" loading="lazy" alt="loading...">
-                                <div class="text">Snow Ruler</div>
-                            </a>
-                        </div>
-                    </div>
-
-
-                    <div class="row">
-                        <div class="col-lg-4 img-grid" style="background-color:#ddd;">
-                            <a class="img-link" href="https://common.snow.com/Mtncams/emerald2.jpg" target="_blank">
-                                <img src="https://common.snow.com/Mtncams/emerald2.jpg" style="width:100%" loading="lazy" alt="loading...">
-                                <div class="text">Emerald</div>
-                            </a>
-                        </div>
-
-                        <div class="col-lg-4 img-grid" style="background-color:#ddd;">
-                            <a class="img-link" href="https://common.snow.com/mtncams/big_red2.jpg" target="_blank">
-                                <img src="https://common.snow.com/mtncams/big_red2.jpg" style="width:100%" loading="lazy" alt="loading...">
-                                <div class="text">Big Red</div>
-                            </a>
-                        </div>
-
-                        <div class="col-lg-4 img-grid" style="background-color:#ddd;">
-                            <a class="img-link" href="https://common.snow.com/Mtncams/valley_south2.jpg" target="_blank">
-                                <img src="https://common.snow.com/Mtncams/valley_south2.jpg" style="width:100%" loading="lazy" alt="loading...">
-                                <div class="text">Valley South</div>
-                            </a>
-                        </div>
-                    </div>
-
-
-                    <div class="row">
-                        <div class="col-lg-4 img-grid" style="background-color:#ddd;">
-                            <a class="img-link" href="https://common.snow.com/Mtncams/6north.jpg" target="_blank">
-                                <img src="https://common.snow.com/Mtncams/6north.jpg" style="width:100%" loading="lazy" alt="loading...">
-                                <div class="text">Alpine North</div>
-                            </a>
-                        </div>
-
-                        <div class="col-lg-4 img-grid" style="background-color:#ddd;">
-                            <a class="img-link" href="https://common.snow.com/Mtncams/4west.jpg" target="_blank">
-                                <img src="https://common.snow.com/Mtncams/4west.jpg" style="width:100%" loading="lazy" alt="loading...">
-                                <div class="text">Alpine West</div>
-                            </a>
-                        </div>
-
-                        <div class="col-lg-4 img-grid" style="background-color:#ddd;">
-                            <a class="img-link" href="https://common.snow.com/Mtncams/2south.jpg" target="_blank">
-                                <img src="https://common.snow.com/Mtncams/2south.jpg" style="width:100%" loading="lazy" alt="loading...">
-                                <div class="text">Alpine South</div>
-                            </a>
-                        </div>
-                    </div>
-
-
-                    <div class="row">
-                        <div class="col-lg-4 img-grid" style="background-color:#ddd;">
-                            <a class="img-link" href="https://whistlerpeak.com/wx_img/v2_L.jpg?hB2sNcMxeC" target="_blank">
-                                <img src="https://whistlerpeak.com/wx_img/v2_L.jpg?hB2sNcMxeC" style="width:100%" loading="lazy" alt="loading...">
-                                <div class="text">Fitzsimmons Express</div>
-                            </a>
-                        </div>
-
-                        <div class="col-lg-4 img-grid" style="background-color:#ddd;">
-                            <a class="img-link" href="https://whistlerpeak.com/wx_img/v4_L.jpg?hB2sNcMxeC" target="_blank">
-                                <img src="https://whistlerpeak.com/wx_img/v4_L.jpg?hB2sNcMxeC" style="width:100%" loading="lazy" alt="loading...">
-                                <div class="text">Garibaldi</div>
-                            </a>
-                        </div>
-
-                        <div class="col-lg-4 img-grid" style="background-color:#ddd;">
-                            <a class="img-link" href="https://whistlerpeak.com/wx_img/v3_L.jpg?hB2sNcMxeC" target="_blank">
-                                <img src="https://whistlerpeak.com/wx_img/v3_L.jpg?hB2sNcMxeC" style="width:100%" loading="lazy" alt="loading...">
-                                <div class="text">Village Gondola</div>
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-lg-4 img-grid" style="background-color:#ddd;">
-                            <a class="img-link" href="https://cache.snow.com/mtncams/UpperVillage.jpg" target="_blank">
-                                <img src="https://cache.snow.com/mtncams/UpperVillage.jpg" style="width:100%" loading="lazy" alt="loading...">
-                                <div class="text">Upper Village</div>
-                            </a>
-                        </div>
-                        <div class="col-lg-4 img-grid" style="background-color:#ddd;">
-                            <a class="img-link" href="https://cdn.whistler.com/downloads/olympic_plaza.jpg" target="_blank">
-                                <img src="https://cdn.whistler.com/downloads/olympic_plaza.jpg" style="width:100%" loading="lazy" alt="loading...">
-                                <div class="text">Olympic Plaza</div>
-                            </a>
-                        </div>
-                        <div class="col-lg-4 img-grid" style="background-color:#ddd;">
-                            <a class="img-link" href="https://cache.snow.com/Mtncams/CreekVillage.jpg" target="_blank">
-                                <img src="https://cache.snow.com/Mtncams/CreekVillage.jpg" style="width:100%" loading="lazy" alt="loading...">
-                                <div class="text">Creekside Village</div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-
-
-            <div class="tab-pane fade" id="nav-blackcomb" role="tabpanel" aria-labelledby="nav-blackcomb-tab">
-
-                <!-- <h3 id="blackcomb-cams">Blackcomb Cams</h3> -->
-                <div class="content-section">
-
-                    <div class="row">
-                        <div class="col-lg-4 img-grid" style="background-color:#ddd;">
-                            <a class="img-link" href="https://common.snow.com/Mtncams/3glaciercreek.jpg" target="_blank">
-                                <img src="https://common.snow.com/Mtncams/3glaciercreek.jpg" style="width:100%" loading="lazy" alt="loading...">
-                                <div class="text">Glacier Creek</div>
-                            </a>
-                        </div>
-
-                        <div class="col-lg-4 img-grid" style="background-color:#ddd;">
-                            <a class="img-link" href="https://common.snow.com/Mtncams/6p2p.jpg" target="_blank">
-                                <img src="https://common.snow.com/Mtncams/6p2p.jpg" style="width:100%" loading="lazy" alt="loading...">
-                                <div class="text">Peak 2 Peak</div>
-                            </a>
-                        </div>
-
-                        <div class="col-lg-4 img-grid" style="background-color:#ddd;">
-                            <a class="img-link" href="https://common.snow.com/Mtncams/5couloir.jpg" target="_blank">
-                                <img src="https://common.snow.com/Mtncams/5couloir.jpg" style="width:100%" loading="lazy" alt="loading...">
-                                <div class="text">Couloir</div>
-                            </a>
-                        </div>
-                    </div>
-
-
-                    <div class="row">
-                        <div class="col-lg-4 img-grid" style="background-color:#ddd;">
-                            <a class="img-link" href="https://common.snow.com/Mtncams/1solar.jpg" target="_blank">                                
-                                <img src="https://common.snow.com/Mtncams/1solar.jpg" style="width:100%" loading="lazy" alt="loading...">
-                                <div class="text">Solar Express</div>
-                            </a>
-                        </div>
-
-                        <div class="col-lg-4 img-grid" style="background-color:#ddd;">
-                            <a class="img-link" href="https://common.snow.com/Mtncams/2wishbone.jpg" target="_blank">
-                                <img src="https://common.snow.com/Mtncams/2wishbone.jpg" style="width:100%" loading="lazy" alt="loading...">
-                                <div class="text">Wishbone</div>
-                            </a>
-                        </div>
-
-                        <div class="col-lg-4 img-grid" style="background-color:#ddd;">
-                            <a class="img-link" href="https://www.whistlerpeak.com/wx_img/b4_L.jpg" target="_blank">
-                                <img src="https://www.whistlerpeak.com/wx_img/b4_L.jpg" style="width:100%" loading="lazy" alt="loading...">
-                                <div class="text">Crystal Road</div>
-                            </a>
-                        </div>
-                    </div>
-
-
-                    <div class="row">
-                        <div class="col-lg-4 img-grid" style="background-color:#ddd;">
-                            <img id="seventh-a" src="" style="width:100%" loading="lazy" alt="loading...">
-                            <div id="seventh-a-lbl" class="text"></div>
-                        </div>
-
-                        <div class="col-lg-4 img-grid" style="background-color:#ddd;">
-                            <img id="seventh-b" src="" style="width:100%" loading="lazy" alt="loading...">
-                            <div id="seventh-b-lbl" class="text"></div>
-                        </div>
-
-                        <div class="col-lg-4 img-grid" style="background-color:#ddd;">
-                            <img id="seventh-c" src="" style="width:100%" loading="lazy" alt="loading...">
-                            <div id="seventh-c-lbl" class="text"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="tab-pane fade" id="nav-travel" role="tabpanel" aria-labelledby="nav-travel-tab">
-                <div class="content-section">
-                    <div class="row">
-                        <div class="col-12 mt-3 mx-auto text-center">
-                            <h4 class="m-2">US Crossing Times</h4>
-                        </div>
-                        <div class="col-6 p-2 m-auto text-center" id="crossing-tbl"></div>
-                    </div>
-        
-                    <hr width="80%">
-
-                    <div class="row justify-content-center">
-                        <div class="col-12 m-auto text-center">
-                            <h4 class="m-2">US Border Cams</h4>
-                        </div>
-                        <div class="w-100"></div>
-                        <div class="col-lg-3">
-                            <a id="peace-href" class="img-link" href="#" target="_blank">
-                                <img id="peace-src" src="#" style="width:100%" loading="lazy" alt="loading...">
-                                <div id="peace-title" class="text-center"></div>
-                            </a>
-                        </div>
-                        <div class="col-lg-3">
-                            <a id="aldergrove-href" class="img-link" href="#" target="_blank">
-                                <img id="aldergrove-src" src="#" style="width:100%" loading="lazy" alt="loading...">
-                                <div id="aldergrove-title" class="text-center"></div>
-                            </a>
-                        </div>
-                        <div class="col-lg-3">
-                            <a id="sumas-href" class="img-link" href="#" target="_blank">
-                                <img id="sumas-src" src="#" style="width:100%" loading="lazy" alt="loading...">
-                                <div id="sumas-title" class="text-center"></div>
-                            </a>
-                        </div>
-                    </div>
-                    
-                    <div class="row justify-content-center mt-3">
-                        <div class="col-12 m-auto text-center">
-                            <h4 class="m-2">Canada Border Cams</h4>
-                        </div>
-                        <div class="w-100"></div>
-                        <div class="col-lg-3">
-                            <a class="img-link" href="https://images.drivebc.ca/bchighwaycam/pub/cameras/13.jpg" target="_blank">
-                                <img src="https://images.drivebc.ca/bchighwaycam/pub/cameras/13.jpg" style="width:100%" loading="lazy" alt="loading...">
-                                <div class="text-center">Peace Arch looking North</div>
-                            </a>
-                        </div>
-                        <div class="col-lg-3">
-                            <a class="img-link" href="https://images.drivebc.ca/bchighwaycam/pub/cameras/170.jpg" target="_blank">
-                                <img src="https://images.drivebc.ca/bchighwaycam/pub/cameras/170.jpg" style="width:100%" loading="lazy" alt="loading...">
-                                <div class="text-center">Sumas looking South</div>
-                            </a>
-                        </div>
-                        <div class="col-lg-3">
-                            <a class="img-link" href="https://images.drivebc.ca/bchighwaycam/pub/cameras/169.jpg" target="_blank">
-                                <img src="https://images.drivebc.ca/bchighwaycam/pub/cameras/169.jpg" style="width:100%" loading="lazy" alt="loading...">
-                                <div class="text-center">Aldergrove looking South</div>
-                            </a>
-                        </div>
-                    </div>
+            <!-- Fatmap -->
+            <div class="row">
+                <div class="col-lg-8 p-2 mx-auto">
+                    <iframe width="100%" height="385" allowfullscreen="" src="https://fatmap.com/activity/pistes/@50.112,-122.9514" frameborder=""></iframe>
                 </div>
             </div>
         </div>
-    </center>
-
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
-
-    <script type="text/javascript">
-        n = new Date();
-        y = n.getFullYear();
-        m = n.getMonth() + 1; // returns (0-11). January = 0
-        d = n.getDate();
-        h = n.getHours();
-
-        var h1;
-        var h2;
-        var h3;
-
-        if (d < 10) {
-            d = '0' + d;
-        }
-        if (m < 10) {
-            m = '0' + m;
-        }
-        if (h > 2) {
-            if (h < 10) {
-                h1 = '0' + h;
-                h2 = '0' + (h - 1);
-                h3 = '0' + (h - 2);
-            } else {
-                h1 = h;
-                if (h - 1 < 10) {
-                    h2 = '0' + (h - 1);
-                } else {
-                    h2 = h - 1;
-                }
-                if (h - 2 < 10) {
-                    h3 = '0' + (h - 2);
-                } else {
-                    h3 = h - 2;
-                }
-            }
-        } else {
-            h1 = h;
-            h2 = h;
-            h3 = h;
-        }
-        document.getElementById("seventh-a").src = "https://whistlerpeak.com/wx_img/seventh/" + y + "-" + m + "-" + d + "-" + h1 + ".jpg";
-        document.getElementById("seventh-b").src = "https://whistlerpeak.com/wx_img/seventh/" + y + "-" + m + "-" + d + "-" + h2 + ".jpg";
-        document.getElementById("seventh-c").src = "https://whistlerpeak.com/wx_img/seventh/" + y + "-" + m + "-" + d + "-" + h3 + ".jpg";
-        document.getElementById("seventh-a-lbl").innerHTML = "7th Heaven (" + h1 + ":00)";
-        document.getElementById("seventh-b-lbl").innerHTML = "7th Heaven (" + h2 + ":00)";
-        document.getElementById("seventh-c-lbl").innerHTML = "7th Heaven (" + h3 + ":00)";
-    </script>
 
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-
-    <!-- Peace Arch cam -->
-    <script>
-        $(document).ready(function () {
-            var key = "fda8d3db-cd7c-425c-b927-9bb64df47309"
-            var url = "https://wsdot.wa.gov/Traffic/api/HighwayCameras/HighwayCamerasREST.svc/GetCameraAsJson?AccessCode=" + key + "&CameraID=1057"
-
-            $.ajax({
-                type: "GET",
-                url: url,
-                contentType: "application/json",
-                dataType: "jsonp",
-                success: function (result, status, xhr) {
-                    $( "#peace-href" ).attr("href", result["ImageURL"]);
-                    $( "#peace-src" ).attr("src", result["ImageURL"]);
-                    $( "#peace-title" ).text(result["Title"]);
-                }
-            });
-        });
-    </script>
-
-    <!-- Aldergrove cam -->
-    <script>
-        $(document).ready(function () {
-            var key = "fda8d3db-cd7c-425c-b927-9bb64df47309"
-            var url = "https://wsdot.wa.gov/Traffic/api/HighwayCameras/HighwayCamerasREST.svc/GetCameraAsJson?AccessCode=" + key + "&CameraID=1209"
-
-            $.ajax({
-                type: "GET",
-                url: url,
-                contentType: "application/json",
-                dataType: "jsonp",
-                success: function (result, status, xhr) {
-                    $( "#aldergrove-href" ).attr("href", result["ImageURL"]);
-                    $( "#aldergrove-src" ).attr("src", result["ImageURL"]);
-                    $( "#aldergrove-title" ).text(result["Title"]);
-                }
-            });
-        });
-    </script>
-
-    <!-- Sumas cam -->
-    <script>
-        $(document).ready(function () {
-            var key = "fda8d3db-cd7c-425c-b927-9bb64df47309"
-            var url = "https://wsdot.wa.gov/Traffic/api/HighwayCameras/HighwayCamerasREST.svc/GetCameraAsJson?AccessCode=" + key + "&CameraID=9445"
-
-            $.ajax({
-                type: "GET",
-                url: url,
-                contentType: "application/json",
-                dataType: "jsonp",
-                success: function (result, status, xhr) {
-                    $( "#sumas-href" ).attr("href", result["ImageURL"]);
-                    $( "#sumas-src" ).attr("src", result["ImageURL"]);
-                    $( "#sumas-title" ).text(result["Title"]);
-                }
-            });
-        });
-    </script>
-
-    <!-- Border crossing times -->
-    <script>
-    $(document).ready(function () {
-        var key = "fda8d3db-cd7c-425c-b927-9bb64df47309"
-        var url = "https://wsdot.wa.gov/Traffic/api/BorderCrossings/BorderCrossingsREST.svc/GetBorderCrossingsAsJson?AccessCode="
-
-        $.ajax({
-            type: "GET",
-            url: url + key,
-            contentType: "application/json",
-            dataType: "jsonp",
-            success: function (result, status, xhr) {
-                var table = $("<table class='table table-striped table-bordered'><thead><tr class='table-secondary'><th>Location</th><th>Time (min)</th></tr></thead><tbody>")
-                for ( var i = 0; i < result.length; i++ ) {
-                    if (result[i]["CrossingName"] == "I5") {
-                        if (result[i]["WaitTime"] == "-1") {
-                            var waittime = "0";
-                        } else {
-                            var waittime = result[i]["WaitTime"];
-                        }
-                        table.append("<tr><td>" + result[i]["BorderCrossingLocation"]["Description"] + "</td><td>" + waittime + "</td></tr>");
-                    } else if (result[i]["CrossingName"] == "SR539") {
-                        if (result[i]["WaitTime"] == "-1") {
-                            var waittime = "0";
-                        } else {
-                            var waittime = result[i]["WaitTime"];
-                        }
-                        table.append("<tr><td>" + result[i]["BorderCrossingLocation"]["Description"] + "</td><td>" + waittime + "</td></tr>");
-                    } else if (result[i]["CrossingName"] == "SR9") {
-                        if (result[i]["WaitTime"] == "-1") {
-                            var waittime = "0";
-                        } else {
-                            var waittime = result[i]["WaitTime"];
-                        }
-                        table.append("<tr><td>" + result[i]["BorderCrossingLocation"]["Description"] + "</td><td>" + waittime + "</td></tr>");
-                    } else if (result[i]["CrossingName"] == "SR543") {
-                        if (result[i]["WaitTime"] == "-1") {
-                            var waittime = "0";
-                        } else {
-                            var waittime = result[i]["WaitTime"];
-                        }
-                        table.append("<tr><td>" + result[i]["BorderCrossingLocation"]["Description"] + "</td><td>" + waittime + "</td></tr>");
-                    }
-                }
-                table.append("</tbody></table>")
-                $( "#crossing-tbl" ).html(table);
-            },
-            error: function(xhr, status, error) {
-                alert(status)
-            }
-        });
-    });
-    </script>
-
-
-
-</body>
-
+        <!-- jQuery first, then Popper.js + Bootstrap JS -->
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <!-- JavaScript Bundle with Popper -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+    </body>
 </html>

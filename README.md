@@ -1,5 +1,5 @@
-# whistler-stream
+# whistler
 
-Whistler Blackcomb live stream and mountain cams.
+Whistler Blackcomb live stream, mountain cams, and travel info.
 
-[View it live](https://geocoug.github.io/whistler-stream)
+[View it live](https://geocoug.github.io/whistler)
