@@ -87,3 +87,15 @@ h3 {
     height: 388px;
     width: 100%;
 }
+
+.nav-item, .nav-link {
+    border-radius: 0.25rem;
+}
+
+.nav-link {
+    color: #dee2e6;
+}
+
+.nav-link:hover {
+    color: #007BFF;
+}
