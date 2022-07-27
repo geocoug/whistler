@@ -390,7 +390,7 @@
     <script>
         $(document).ready(function () {
             var key = "fda8d3db-cd7c-425c-b927-9bb64df47309"
-            var url = "http://wsdot.wa.gov/Traffic/api/HighwayCameras/HighwayCamerasREST.svc/GetCameraAsJson?AccessCode=" + key + "&CameraID=1057"
+            var url = "https://wsdot.wa.gov/Traffic/api/HighwayCameras/HighwayCamerasREST.svc/GetCameraAsJson?AccessCode=" + key + "&CameraID=1057"
 
             $.ajax({
                 type: "GET",
@@ -401,9 +401,6 @@
                     $( "#peace-href" ).attr("href", result["ImageURL"]);
                     $( "#peace-src" ).attr("src", result["ImageURL"]);
                     $( "#peace-title" ).text(result["Title"]);
-                },
-                error: function(xhr, status, error) {
-                    alert(status)
                 }
             });
         });
@@ -413,7 +410,7 @@
     <script>
         $(document).ready(function () {
             var key = "fda8d3db-cd7c-425c-b927-9bb64df47309"
-            var url = "http://wsdot.wa.gov/Traffic/api/HighwayCameras/HighwayCamerasREST.svc/GetCameraAsJson?AccessCode=" + key + "&CameraID=1209"
+            var url = "https://wsdot.wa.gov/Traffic/api/HighwayCameras/HighwayCamerasREST.svc/GetCameraAsJson?AccessCode=" + key + "&CameraID=1209"
 
             $.ajax({
                 type: "GET",
@@ -424,9 +421,6 @@
                     $( "#aldergrove-href" ).attr("href", result["ImageURL"]);
                     $( "#aldergrove-src" ).attr("src", result["ImageURL"]);
                     $( "#aldergrove-title" ).text(result["Title"]);
-                },
-                error: function(xhr, status, error) {
-                    alert(status)
                 }
             });
         });
@@ -436,7 +430,7 @@
     <script>
         $(document).ready(function () {
             var key = "fda8d3db-cd7c-425c-b927-9bb64df47309"
-            var url = "http://wsdot.wa.gov/Traffic/api/HighwayCameras/HighwayCamerasREST.svc/GetCameraAsJson?AccessCode=" + key + "&CameraID=9445"
+            var url = "https://wsdot.wa.gov/Traffic/api/HighwayCameras/HighwayCamerasREST.svc/GetCameraAsJson?AccessCode=" + key + "&CameraID=9445"
 
             $.ajax({
                 type: "GET",
@@ -447,9 +441,6 @@
                     $( "#sumas-href" ).attr("href", result["ImageURL"]);
                     $( "#sumas-src" ).attr("src", result["ImageURL"]);
                     $( "#sumas-title" ).text(result["Title"]);
-                },
-                error: function(xhr, status, error) {
-                    alert(status)
                 }
             });
         });
