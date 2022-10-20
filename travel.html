@@ -105,12 +105,14 @@
         <!-- ajax -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 
-        <!-- Peace Arch cam -->
+        <!-- WSDOT API - Road Cameras -->
         <script>
             $(document).ready(function () {
                 var key = "fda8d3db-cd7c-425c-b927-9bb64df47309"
-                var url = "https://wsdot.wa.gov/Traffic/api/HighwayCameras/HighwayCamerasREST.svc/GetCameraAsJson?AccessCode=" + key + "&CameraID=1057"
-    
+                var entrypoint = "https://wsdot.wa.gov/Traffic/api/HighwayCameras/HighwayCamerasREST.svc/GetCameraAsJson?AccessCode="
+
+                // Peace Arch cam
+                var url = entrypoint + key + "&CameraID=1057"
                 $.ajax({
                     type: "GET",
                     url: url,
@@ -122,15 +124,9 @@
                         $( "#peace-title" ).text(result["Title"]);
                     }
                 });
-            });
-        </script>
-    
-        <!-- Aldergrove cam -->
-        <script>
-            $(document).ready(function () {
-                var key = "fda8d3db-cd7c-425c-b927-9bb64df47309"
-                var url = "https://wsdot.wa.gov/Traffic/api/HighwayCameras/HighwayCamerasREST.svc/GetCameraAsJson?AccessCode=" + key + "&CameraID=1209"
-    
+
+                // Aldergrove cam 
+                var url = entrypoint + key + "&CameraID=1209"
                 $.ajax({
                     type: "GET",
                     url: url,
@@ -142,15 +138,9 @@
                         $( "#aldergrove-title" ).text(result["Title"]);
                     }
                 });
-            });
-        </script>
-    
-        <!-- Sumas cam -->
-        <script>
-            $(document).ready(function () {
-                var key = "fda8d3db-cd7c-425c-b927-9bb64df47309"
-                var url = "https://wsdot.wa.gov/Traffic/api/HighwayCameras/HighwayCamerasREST.svc/GetCameraAsJson?AccessCode=" + key + "&CameraID=9445"
-    
+
+                // Sumas cam
+                var url = entrypoint + key + "&CameraID=9445"
                 $.ajax({
                     type: "GET",
                     url: url,
@@ -170,7 +160,7 @@
         $(document).ready(function () {
             var key = "fda8d3db-cd7c-425c-b927-9bb64df47309"
             var url = "https://wsdot.wa.gov/Traffic/api/BorderCrossings/BorderCrossingsREST.svc/GetBorderCrossingsAsJson?AccessCode="
-    
+            
             $.ajax({
                 type: "GET",
                 url: url + key,
@@ -181,28 +171,28 @@
                     for ( var i = 0; i < result.length; i++ ) {
                         if (result[i]["CrossingName"] == "I5") {
                             if (result[i]["WaitTime"] == "-1") {
-                                var waittime = "0";
+                                var waittime = "Closed";
                             } else {
                                 var waittime = result[i]["WaitTime"];
                             }
                             table.append("<tr><td>" + result[i]["BorderCrossingLocation"]["Description"] + "</td><td>" + waittime + "</td></tr>");
                         } else if (result[i]["CrossingName"] == "SR539") {
                             if (result[i]["WaitTime"] == "-1") {
-                                var waittime = "0";
+                                var waittime = "Closed";
                             } else {
                                 var waittime = result[i]["WaitTime"];
                             }
                             table.append("<tr><td>" + result[i]["BorderCrossingLocation"]["Description"] + "</td><td>" + waittime + "</td></tr>");
                         } else if (result[i]["CrossingName"] == "SR9") {
                             if (result[i]["WaitTime"] == "-1") {
-                                var waittime = "0";
+                                var waittime = "Closed";
                             } else {
                                 var waittime = result[i]["WaitTime"];
                             }
                             table.append("<tr><td>" + result[i]["BorderCrossingLocation"]["Description"] + "</td><td>" + waittime + "</td></tr>");
                         } else if (result[i]["CrossingName"] == "SR543") {
                             if (result[i]["WaitTime"] == "-1") {
-                                var waittime = "0";
+                                var waittime = "Closed";
                             } else {
                                 var waittime = result[i]["WaitTime"];
                             }
