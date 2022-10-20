@@ -160,6 +160,12 @@
         $(document).ready(function () {
             var key = "fda8d3db-cd7c-425c-b927-9bb64df47309"
             var url = "https://wsdot.wa.gov/Traffic/api/BorderCrossings/BorderCrossingsREST.svc/GetBorderCrossingsAsJson?AccessCode="
+            var crossings = {
+                "I5": "Blaine", 
+                "SR543": "Blaine",
+                "SR539": "Lynden", 
+                "SR9": "Sumas"
+            }
             
             $.ajax({
                 type: "GET",
@@ -169,34 +175,13 @@
                 success: function (result, status, xhr) {
                     var table = $("<table class='table table-striped table-bordered'><thead><tr class='table-secondary'><th>Location</th><th>Time (min)</th></tr></thead><tbody>")
                     for ( var i = 0; i < result.length; i++ ) {
-                        if (result[i]["CrossingName"] == "I5") {
+                        if (Object.keys(crossings).includes(result[i]["CrossingName"])) {
                             if (result[i]["WaitTime"] == "-1") {
                                 var waittime = "Closed";
                             } else {
                                 var waittime = result[i]["WaitTime"];
                             }
-                            table.append("<tr><td>" + result[i]["BorderCrossingLocation"]["Description"] + "</td><td>" + waittime + "</td></tr>");
-                        } else if (result[i]["CrossingName"] == "SR539") {
-                            if (result[i]["WaitTime"] == "-1") {
-                                var waittime = "Closed";
-                            } else {
-                                var waittime = result[i]["WaitTime"];
-                            }
-                            table.append("<tr><td>" + result[i]["BorderCrossingLocation"]["Description"] + "</td><td>" + waittime + "</td></tr>");
-                        } else if (result[i]["CrossingName"] == "SR9") {
-                            if (result[i]["WaitTime"] == "-1") {
-                                var waittime = "Closed";
-                            } else {
-                                var waittime = result[i]["WaitTime"];
-                            }
-                            table.append("<tr><td>" + result[i]["BorderCrossingLocation"]["Description"] + "</td><td>" + waittime + "</td></tr>");
-                        } else if (result[i]["CrossingName"] == "SR543") {
-                            if (result[i]["WaitTime"] == "-1") {
-                                var waittime = "Closed";
-                            } else {
-                                var waittime = result[i]["WaitTime"];
-                            }
-                            table.append("<tr><td>" + result[i]["BorderCrossingLocation"]["Description"] + "</td><td>" + waittime + "</td></tr>");
+                            table.append("<tr><td>" + result[i]["BorderCrossingLocation"]["Description"] + " (" + crossings[result[i]["CrossingName"]] + ")" + "</td><td>" + waittime + "</td></tr>");
                         }
                     }
                     table.append("</tbody></table>")
