@@ -1,0 +1,75 @@
+---
+export interface Props {
+  id: string;
+  name: string;
+  src: string; // direct image URL, or empty string if it will be set at runtime
+  // If the image URL needs to be discovered at runtime (e.g. via the WSDOT API),
+  // pass `deferred` and populate later by writing to [data-cam-img][data-id=...]
+  deferred?: boolean;
+  subtitle?: string;
+}
+const { id, name, src, subtitle, deferred } = Astro.props;
+---
+
+<article class="cam-tile" data-cam-snapshot data-id={id}>
+  <header>
+    <div class="min-w-0">
+      <div class="truncate">{name}</div>
+      {subtitle && <div class="text-[11px] font-normal muted font-sans truncate">{subtitle}</div>}
+    </div>
+    <button
+      class="star-btn"
+      type="button"
+      data-lightbox
+      data-lightbox-title={name}
+      aria-label={`Expand ${name}`}
+      title="Expand"
+    >
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+      </svg>
+    </button>
+  </header>
+  <div class="media">
+    {deferred ? (
+      <div class="skeleton w-full h-full" data-cam-img data-id={id} aria-label={name}></div>
+    ) : (
+      <img
+        src={src}
+        data-cam-img
+        data-id={id}
+        data-src={src}
+        alt={name}
+        loading="lazy"
+        referrerpolicy="no-referrer"
+      />
+    )}
+  </div>
+</article>
+
+<script>
+  // Auto-refresh every 60s by appending a cache-buster. Works for static JPG snapshots.
+  const TILES = document.querySelectorAll<HTMLElement>("[data-cam-snapshot]");
+  const INTERVAL = 60_000;
+
+  function refresh(tile: HTMLElement) {
+    const img = tile.querySelector<HTMLImageElement>("img[data-cam-img]");
+    if (!img) return;
+    const base = img.dataset.src ?? img.src.split("?")[0];
+    img.dataset.src = base;
+    img.src = `${base}${base.includes("?") ? "&" : "?"}t=${Date.now()}`;
+  }
+
+  TILES.forEach((tile) => {
+    const img = tile.querySelector<HTMLImageElement>("img[data-cam-img]");
+    if (img) {
+      // Seed lightbox src off the image
+      const btn = tile.querySelector<HTMLButtonElement>("button[data-lightbox]");
+      btn?.setAttribute("data-lightbox-src", img.src);
+      img.addEventListener("load", () => {
+        btn?.setAttribute("data-lightbox-src", img.src.split("?")[0]);
+      });
+    }
+    setInterval(() => refresh(tile), INTERVAL);
+  });
+</script>

@@ -1,0 +1,29 @@
+---
+import Base from "../layouts/Base.astro";
+import BorderWait from "../components/BorderWait.astro";
+import WsdotCamRow from "../components/WsdotCamRow.astro";
+import DriveBcCamRow from "../components/DriveBcCamRow.astro";
+import { driveBcBorderCams, driveBcSeaToSkyCams } from "../data/borderCams";
+---
+
+<Base
+  title="Travel — Whistler.live"
+  pretitle="Sea-to-Sky Travel"
+  heading="Border &amp; Highway"
+  description="US/Canada border wait times and live cams for the Sea-to-Sky highway to Whistler."
+>
+  <div class="space-y-8">
+    <BorderWait />
+    <WsdotCamRow />
+    <DriveBcCamRow
+      title="Canada Border Cams"
+      subtitle="Looking across the border from the BC side"
+      cams={driveBcBorderCams}
+    />
+    <DriveBcCamRow
+      title="Hwy 99 · Sea-to-Sky"
+      subtitle="Vancouver → Whistler, in travel order"
+      cams={driveBcSeaToSkyCams}
+    />
+  </div>
+</Base>

@@ -1,0 +1,32 @@
+---
+import Base from "../layouts/Base.astro";
+import ConditionsStrip from "../components/ConditionsStrip.astro";
+import SnowChart from "../components/SnowChart.astro";
+import CamGrid from "../components/CamGrid.astro";
+import AvalancheCard from "../components/AvalancheCard.astro";
+import LiftStatusCard from "../components/LiftStatusCard.astro";
+import TrailMap from "../components/TrailMap.astro";
+---
+
+<Base
+  title="Whistler.live — Live cams, snow, and mountain conditions"
+  pretitle="Whistler Blackcomb"
+  heading="Conditions Dashboard"
+>
+  <div class="space-y-6">
+    <ConditionsStrip />
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2">
+        <SnowChart />
+      </div>
+      <AvalancheCard />
+    </div>
+    <CamGrid />
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2">
+        <TrailMap />
+      </div>
+      <LiftStatusCard />
+    </div>
+  </div>
+</Base>
