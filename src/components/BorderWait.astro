@@ -1,0 +1,113 @@
+---
+// Border crossing wait times, rendered client-side from the WSDOT API.
+// NOTE: key is intentionally client-side (see src/data/borderCams.ts).
+---
+
+<section class="surface p-5 sm:p-6" id="border-wait">
+  <div class="flex items-start justify-between gap-3 flex-wrap">
+    <div>
+      <div class="text-xs uppercase tracking-widest muted font-display">WSDOT</div>
+      <h2 class="font-display text-2xl font-semibold">US Border Wait Times</h2>
+    </div>
+    <span class="chip" id="border-updated">Loading…</span>
+  </div>
+  <div class="mt-4 overflow-hidden rounded-xl border" style="border-color: var(--border);">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Crossing</th>
+          <th>Route</th>
+          <th class="text-right">Wait</th>
+        </tr>
+      </thead>
+      <tbody id="border-body">
+        <tr><td colspan="3" class="muted text-sm text-center py-6">Fetching wait times…</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="mt-3 text-xs muted">
+    Heading north? Check
+    <a class="underline decoration-dotted" href="https://www.cbsa-asfc.gc.ca/bwt-taf/menu-eng.html" target="_blank" rel="noopener">CBSA border wait times</a>
+    for Canadian-side delays.
+  </p>
+</section>
+
+<script>
+  import { WSDOT_BORDER_URL, WSDOT_KEY } from "../data/borderCams";
+
+  type Row = {
+    CrossingName: string;
+    WaitTime: number;
+    Time: string;
+    BorderCrossingLocation: { Description: string };
+  };
+
+  const crossings: Record<string, string> = {
+    I5: "Blaine / Peace Arch",
+    SR543: "Blaine / Truck",
+    SR539: "Lynden / Aldergrove",
+    SR9: "Sumas",
+  };
+
+  function fmtWait(min: number) {
+    if (min < 0) return "Closed";
+    if (min === 0) return "No wait";
+    return `${min} min`;
+  }
+
+  function ageBadge(time: string | undefined) {
+    if (!time) return "";
+    // WSDOT returns /Date(1234567890000-0700)/
+    const m = /\/Date\((\d+)/.exec(time);
+    if (!m) return "";
+    const age = Math.round((Date.now() - Number(m[1])) / 60000);
+    return age > 0 ? `updated ${age} min ago` : "just updated";
+  }
+
+  async function load() {
+    const res = await fetch(WSDOT_BORDER_URL(WSDOT_KEY));
+    if (!res.ok) throw new Error("border fetch failed");
+    const rows = (await res.json()) as Row[];
+    const matching = rows.filter((r) => r.CrossingName in crossings);
+    const tbody = document.getElementById("border-body");
+    if (!tbody) return;
+    if (!matching.length) {
+      tbody.innerHTML = `<tr><td colspan="3" class="muted text-sm text-center py-6">No crossings reported.</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = matching
+      .map((r) => {
+        const wait = r.WaitTime;
+        const tone =
+          wait < 0
+            ? "var(--color-night-500)"
+            : wait <= 10
+              ? "var(--color-pine-500)"
+              : wait <= 30
+                ? "var(--color-sunset-400)"
+                : "#e24040";
+        return `
+          <tr>
+            <td class="font-medium">${r.BorderCrossingLocation?.Description ?? crossings[r.CrossingName]}</td>
+            <td class="muted text-xs uppercase tracking-wider">${r.CrossingName}</td>
+            <td class="text-right font-display font-semibold" style="color: ${tone}">${fmtWait(wait)}</td>
+          </tr>`;
+      })
+      .join("");
+    const updated = matching
+      .map((r) => ageBadge(r.Time))
+      .filter(Boolean)
+      .sort()[0];
+    const pill = document.getElementById("border-updated");
+    if (pill) pill.textContent = updated || "live";
+  }
+
+  load().catch((err) => {
+    console.warn("[border]", err);
+    const tbody = document.getElementById("border-body");
+    if (tbody)
+      tbody.innerHTML = `<tr><td colspan="3" class="muted text-sm text-center py-6">Couldn't reach WSDOT. <a class="underline" href="https://wsdot.com/travel/real-time/map" target="_blank" rel="noopener">Open WSDOT map ↗</a></td></tr>`;
+    const pill = document.getElementById("border-updated");
+    if (pill) pill.textContent = "offline";
+  });
+</script>

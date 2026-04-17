@@ -1,0 +1,171 @@
+---
+// Live weather strip: renders skeletons server-side, fills from Open-Meteo in the browser.
+---
+
+<section
+  class="surface p-4 sm:p-6 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4"
+  id="conditions-strip"
+  data-loading="true"
+>
+  <div class="col-span-2 sm:col-span-2 lg:col-span-2 flex items-center gap-4">
+    <div
+      class="h-14 w-14 rounded-2xl grid place-items-center"
+      style="background: linear-gradient(135deg, color-mix(in oklab, var(--accent) 35%, transparent), color-mix(in oklab, var(--color-sunset-500) 20%, transparent));"
+      aria-hidden="true"
+    >
+      <span data-c="icon" class="text-2xl">⛰️</span>
+    </div>
+    <div>
+      <div class="text-xs uppercase tracking-widest muted font-display">Whistler Village</div>
+      <div class="flex items-baseline gap-2">
+        <span data-c="temp" class="font-display text-4xl font-semibold skeleton w-16 inline-block">—</span>
+        <span class="muted text-sm" data-c="feels">&nbsp;</span>
+      </div>
+      <div class="text-xs muted" data-c="desc">&nbsp;</div>
+    </div>
+  </div>
+  <div>
+    <div class="text-xs uppercase tracking-widest muted font-display">New Snow</div>
+    <div class="font-display text-2xl font-semibold"><span data-c="snow" class="skeleton inline-block w-14">—</span></div>
+    <div class="text-xs muted">24 hr</div>
+  </div>
+  <div>
+    <div class="text-xs uppercase tracking-widest muted font-display">Wind</div>
+    <div class="font-display text-2xl font-semibold"><span data-c="wind" class="skeleton inline-block w-14">—</span></div>
+    <div class="text-xs muted" data-c="winddir">gusts &mdash;</div>
+  </div>
+  <div>
+    <div class="text-xs uppercase tracking-widest muted font-display">Freezing Lvl</div>
+    <div class="font-display text-2xl font-semibold"><span data-c="freeze" class="skeleton inline-block w-14">—</span></div>
+    <div class="text-xs muted">m asl</div>
+  </div>
+  <div>
+    <div class="text-xs uppercase tracking-widest muted font-display">Sunset</div>
+    <div class="font-display text-2xl font-semibold"><span data-c="sunset" class="skeleton inline-block w-14">—</span></div>
+    <div class="text-xs muted" data-c="sunrise">sunrise &mdash;</div>
+  </div>
+</section>
+
+<script>
+  type Payload = {
+    current: {
+      temperature_2m: number;
+      apparent_temperature: number;
+      weather_code: number;
+      wind_speed_10m: number;
+      wind_gusts_10m: number;
+      wind_direction_10m: number;
+      snowfall: number;
+    };
+    daily: {
+      sunrise: string[];
+      sunset: string[];
+      snowfall_sum: number[];
+      freezing_level_height: number[];
+    };
+    hourly?: {
+      time: string[];
+      snowfall: number[];
+    };
+  };
+
+  const codeDesc: Record<number, [string, string]> = {
+    0: ["Clear", "☀️"],
+    1: ["Mostly clear", "🌤️"],
+    2: ["Partly cloudy", "⛅"],
+    3: ["Overcast", "☁️"],
+    45: ["Fog", "🌫️"],
+    48: ["Freezing fog", "🌫️"],
+    51: ["Light drizzle", "🌦️"],
+    53: ["Drizzle", "🌦️"],
+    55: ["Heavy drizzle", "🌧️"],
+    61: ["Light rain", "🌧️"],
+    63: ["Rain", "🌧️"],
+    65: ["Heavy rain", "🌧️"],
+    71: ["Light snow", "🌨️"],
+    73: ["Snow", "❄️"],
+    75: ["Heavy snow", "❄️"],
+    77: ["Snow grains", "❄️"],
+    80: ["Showers", "🌦️"],
+    81: ["Heavy showers", "🌧️"],
+    82: ["Violent showers", "⛈️"],
+    85: ["Light snow showers", "🌨️"],
+    86: ["Heavy snow showers", "❄️"],
+    95: ["Thunderstorm", "⛈️"],
+    96: ["Thunder + hail", "⛈️"],
+    99: ["Severe thunder", "⛈️"],
+  };
+
+  function deg(n: number) {
+    const dirs = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+    return dirs[Math.round(n / 45) % 8];
+  }
+
+  function fmtTime(iso: string) {
+    try {
+      return new Date(iso).toLocaleTimeString([], {
+        hour: "numeric",
+        minute: "2-digit",
+      });
+    } catch {
+      return "—";
+    }
+  }
+
+  async function load() {
+    const url =
+      "https://api.open-meteo.com/v1/forecast?latitude=50.1163&longitude=-122.9574" +
+      "&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,wind_gusts_10m,wind_direction_10m,snowfall" +
+      "&daily=sunrise,sunset,snowfall_sum,freezing_level_height" +
+      "&hourly=snowfall&past_days=1&forecast_days=1&timezone=auto&wind_speed_unit=kmh&temperature_unit=celsius&precipitation_unit=inch";
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("weather fetch failed");
+    const data = (await res.json()) as Payload;
+    render(data);
+  }
+
+  function setText(attr: string, text: string) {
+    const el = document.querySelector<HTMLElement>(`#conditions-strip [data-c="${attr}"]`);
+    if (!el) return;
+    el.textContent = text;
+    el.classList.remove("skeleton");
+  }
+
+  function render(data: Payload) {
+    const c = data.current;
+    const [desc, icon] = codeDesc[c.weather_code] ?? ["—", "⛰️"];
+    setText("icon", icon);
+    setText("temp", `${Math.round(c.temperature_2m)}°`);
+    setText("feels", `feels ${Math.round(c.apparent_temperature)}°`);
+    setText("desc", desc);
+    // Snow total last 24h from hourly
+    const last24Snow = (data.hourly?.snowfall ?? [])
+      .slice(-24)
+      .reduce((a, b) => a + (b ?? 0), 0);
+    setText("snow", last24Snow > 0 ? `${last24Snow.toFixed(1)}″` : "0″");
+    setText("wind", `${Math.round(c.wind_speed_10m)} km/h`);
+    setText(
+      "winddir",
+      `${deg(c.wind_direction_10m)} · gust ${Math.round(c.wind_gusts_10m)}`
+    );
+    const freeze = data.daily.freezing_level_height?.[0];
+    setText("freeze", freeze != null ? `${Math.round(freeze)} m` : "—");
+    const sunrise = data.daily.sunrise?.[0];
+    const sunset = data.daily.sunset?.[0];
+    setText("sunset", sunset ? fmtTime(sunset) : "—");
+    setText("sunrise", sunrise ? `sunrise ${fmtTime(sunrise)}` : "");
+    document
+      .getElementById("conditions-strip")
+      ?.setAttribute("data-loading", "false");
+  }
+
+  load().catch((err) => {
+    console.warn("[conditions]", err);
+    document
+      .querySelectorAll<HTMLElement>("#conditions-strip .skeleton")
+      .forEach((el) => {
+        el.textContent = "—";
+        el.classList.remove("skeleton");
+      });
+  });
+</script>

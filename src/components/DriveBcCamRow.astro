@@ -1,0 +1,35 @@
+---
+import SnapshotCamTile from "./SnapshotCamTile.astro";
+import type { DriveBcCam } from "../data/borderCams";
+
+export interface Props {
+  title: string;
+  subtitle?: string;
+  cams: DriveBcCam[];
+}
+const { title, subtitle, cams } = Astro.props;
+const imgUrl = (id: number) =>
+  `https://images.drivebc.ca/bchighwaycam/pub/cameras/${id}.jpg`;
+---
+
+<section class="space-y-3">
+  <div class="flex items-end justify-between gap-3 flex-wrap">
+    <h2 class="font-display text-xl font-semibold">
+      {title}
+      <span class="muted text-sm font-sans font-normal">· DriveBC</span>
+    </h2>
+    {subtitle && <p class="muted text-sm">{subtitle}</p>}
+  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    {
+      cams.map((cam) => (
+        <SnapshotCamTile
+          id={`drivebc-${cam.id}`}
+          name={cam.name}
+          src={imgUrl(cam.imageId)}
+          subtitle={`DriveBC · ${cam.imageId}`}
+        />
+      ))
+    }
+  </div>
+</section>

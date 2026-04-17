@@ -1,0 +1,184 @@
+---
+import { mountainCams } from "../data/cams";
+---
+
+<section class="space-y-4">
+  <div class="flex flex-wrap items-end justify-between gap-3">
+    <div>
+      <div class="text-xs uppercase tracking-widest muted font-display">Live Mountain</div>
+      <h2 class="font-display text-2xl sm:text-3xl font-semibold">Cams</h2>
+    </div>
+    <div class="flex items-center gap-2 text-sm">
+      <button id="cam-reset" class="btn !py-1.5 !px-3 text-xs" type="button">Reset order</button>
+      <span class="chip">
+        <span class="h-2 w-2 rounded-full" style="background: var(--color-pine-500);"></span>
+        <span id="cam-count">{mountainCams.length}</span> feeds
+      </span>
+    </div>
+  </div>
+
+  <div
+    id="cam-grid"
+    class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4"
+    data-cams={JSON.stringify(mountainCams)}
+  >
+  </div>
+</section>
+
+<script>
+  import { mountainCams } from "../data/cams";
+
+  const STORAGE_KEY = "whistler-cams-state-v1";
+  type State = { order: string[]; favorites: string[] };
+  const all = mountainCams;
+
+  function load(): State {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return { order: all.map((c) => c.id), favorites: [] };
+      const parsed = JSON.parse(raw) as Partial<State>;
+      const order = parsed.order?.filter((id) => all.some((c) => c.id === id)) ?? [];
+      const missing = all.map((c) => c.id).filter((id) => !order.includes(id));
+      return {
+        order: [...order, ...missing],
+        favorites: parsed.favorites ?? [],
+      };
+    } catch {
+      return { order: all.map((c) => c.id), favorites: [] };
+    }
+  }
+
+  function save(state: State) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch {}
+  }
+
+  let state = load();
+
+  const grid = document.getElementById("cam-grid");
+  if (!grid) throw new Error("grid not found");
+
+  function sortedCams() {
+    const byId = new Map(all.map((c) => [c.id, c]));
+    const favSet = new Set(state.favorites);
+    return state.order
+      .map((id) => byId.get(id))
+      .filter((c): c is (typeof all)[number] => !!c)
+      .sort((a, b) => Number(favSet.has(b.id)) - Number(favSet.has(a.id)));
+  }
+
+  function star(faved: boolean) {
+    return `
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="${faved ? "currentColor" : "none"}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="12 2 15 8.5 22 9.3 17 14.1 18.2 21 12 17.8 5.8 21 7 14.1 2 9.3 9 8.5 12 2" />
+      </svg>`;
+  }
+
+  function renderTile(cam: (typeof all)[number]) {
+    const faved = state.favorites.includes(cam.id);
+    const el = document.createElement("article");
+    el.className = "cam-tile";
+    el.dataset.camId = cam.id;
+    el.setAttribute("draggable", "true");
+    el.innerHTML = `
+      <header>
+        <div class="flex items-center gap-2 min-w-0">
+          <svg class="shrink-0 opacity-50" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/>
+            <circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/>
+          </svg>
+          <div class="min-w-0">
+            <div class="truncate">${cam.name}</div>
+            <div class="text-[11px] font-normal muted font-sans">${cam.location}${cam.elevationM ? ` · ${cam.elevationM} m` : ""}</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <button type="button" class="star-btn" data-fav aria-label="${faved ? "Unfavorite" : "Favorite"}" data-faved="${faved}" title="${faved ? "Remove from favorites" : "Favorite"}">
+            ${star(faved)}
+          </button>
+          <button type="button" class="star-btn" data-expand data-lightbox data-lightbox-embed="${cam.embedUrl}" data-lightbox-title="${cam.name}" aria-label="Expand ${cam.name}" title="Expand">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+            </svg>
+          </button>
+        </div>
+      </header>
+      <div class="media">
+        <iframe src="${cam.embedUrl}" loading="lazy" allow="autoplay; fullscreen" title="${cam.name} live cam"></iframe>
+      </div>
+    `;
+    return el;
+  }
+
+  function render() {
+    grid.replaceChildren(...sortedCams().map(renderTile));
+  }
+
+  render();
+
+  // ---------- drag & drop reorder ----------
+  let dragId: string | null = null;
+
+  grid.addEventListener("dragstart", (e) => {
+    const tile = (e.target as HTMLElement).closest<HTMLElement>(".cam-tile");
+    if (!tile) return;
+    dragId = tile.dataset.camId ?? null;
+    tile.classList.add("dragging");
+    e.dataTransfer?.setData("text/plain", dragId ?? "");
+    e.dataTransfer!.effectAllowed = "move";
+  });
+
+  grid.addEventListener("dragend", () => {
+    dragId = null;
+    grid.querySelectorAll(".cam-tile").forEach((el) => {
+      el.classList.remove("dragging", "drop-target");
+    });
+  });
+
+  grid.addEventListener("dragover", (e) => {
+    const tile = (e.target as HTMLElement).closest<HTMLElement>(".cam-tile");
+    if (!tile || tile.dataset.camId === dragId) return;
+    e.preventDefault();
+    grid
+      .querySelectorAll(".cam-tile.drop-target")
+      .forEach((el) => el.classList.remove("drop-target"));
+    tile.classList.add("drop-target");
+  });
+
+  grid.addEventListener("drop", (e) => {
+    e.preventDefault();
+    const target = (e.target as HTMLElement).closest<HTMLElement>(".cam-tile");
+    if (!target || !dragId) return;
+    const targetId = target.dataset.camId;
+    if (!targetId || targetId === dragId) return;
+    const order = state.order.filter((id) => id !== dragId);
+    const idx = order.indexOf(targetId);
+    order.splice(idx, 0, dragId);
+    state = { ...state, order };
+    save(state);
+    render();
+  });
+
+  // ---------- favorite ----------
+  grid.addEventListener("click", (e) => {
+    const favBtn = (e.target as HTMLElement).closest<HTMLButtonElement>("[data-fav]");
+    if (!favBtn) return;
+    const tile = favBtn.closest<HTMLElement>(".cam-tile");
+    const id = tile?.dataset.camId;
+    if (!id) return;
+    const favSet = new Set(state.favorites);
+    if (favSet.has(id)) favSet.delete(id);
+    else favSet.add(id);
+    state = { ...state, favorites: [...favSet] };
+    save(state);
+    render();
+  });
+
+  // ---------- reset ----------
+  document.getElementById("cam-reset")?.addEventListener("click", () => {
+    state = { order: all.map((c) => c.id), favorites: [] };
+    save(state);
+    render();
+  });
+</script>

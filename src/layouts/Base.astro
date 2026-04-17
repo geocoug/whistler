@@ -1,0 +1,100 @@
+---
+import "../styles/global.css";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+
+export interface Props {
+  title: string;
+  description?: string;
+  pretitle?: string;
+  heading?: string;
+}
+
+const {
+  title,
+  description = "Whistler Blackcomb live cams, snow conditions, avalanche bulletin, and travel info.",
+  pretitle,
+  heading,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0a0f1c" />
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="preconnect" href="https://rsms.me/" crossorigin />
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap"
+    />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <title>{title}</title>
+    <script is:inline>
+      // Sync theme before paint to avoid flash.
+      (function () {
+        try {
+          var stored = localStorage.getItem("whistler-theme");
+          var url = new URL(window.location.href);
+          var override = url.searchParams.get("theme");
+          var theme = override || stored || "dark";
+          if (override) localStorage.setItem("whistler-theme", override);
+          if (theme === "light") document.documentElement.setAttribute("data-theme", "light");
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body class="min-h-screen">
+    <Nav />
+    <main class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-6 pb-16">
+      {
+        (pretitle || heading) && (
+          <header class="mb-8 flex flex-col gap-1">
+            {pretitle && (
+              <div class="text-xs uppercase tracking-[0.18em] muted font-display">
+                {pretitle}
+              </div>
+            )}
+            {heading && (
+              <h1 class="font-display text-3xl sm:text-4xl lg:text-5xl font-semibold">
+                {heading}
+              </h1>
+            )}
+          </header>
+        )
+      }
+      <slot />
+    </main>
+    <Footer />
+    <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-hidden="true">
+      <button class="lightbox-close" aria-label="Close">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M18 6L6 18M6 6l12 12" />
+        </svg>
+      </button>
+      <div class="lightbox-content"></div>
+    </div>
+    <script>
+      import "../scripts/theme.ts";
+      import "../scripts/lightbox.ts";
+      import "../scripts/pwa.ts";
+    </script>
+  </body>
+</html>

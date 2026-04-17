@@ -1,0 +1,96 @@
+---
+import ThemeToggle from "./ThemeToggle.astro";
+const path = Astro.url.pathname.replace(/\/$/, "") || "/";
+const links = [
+  { href: "/", label: "Conditions", match: ["/", ""] },
+  { href: "/travel", label: "Travel", match: ["/travel"] },
+  {
+    href: "https://www.whistlerblackcomb.com/the-mountain/mountain-conditions/terrain-and-lift-status.aspx",
+    label: "Lift Status",
+    external: true,
+  },
+];
+---
+
+<header class="sticky top-0 z-40 backdrop-blur-md" style="background: color-mix(in oklab, var(--bg) 78%, transparent); border-bottom: 1px solid var(--border);">
+  <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+    <a href="/" class="flex items-center gap-3 group">
+      <span
+        class="h-9 w-9 rounded-xl grid place-items-center"
+        style="background: linear-gradient(135deg, var(--color-glacier-400), var(--color-glacier-600)); box-shadow: 0 8px 24px -10px color-mix(in oklab, var(--color-glacier-400) 70%, transparent);"
+      >
+        <!-- Mountain icon -->
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#04131a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 20l6-12 4 7 3-4 5 9z" />
+          <path d="M9 8l-2 4" />
+        </svg>
+      </span>
+      <span class="font-display font-semibold text-lg tracking-tight">
+        Whistler<span style="color: var(--accent)">.live</span>
+      </span>
+    </a>
+    <nav class="hidden md:flex items-center gap-1">
+      {
+        links.map((link) => {
+          const active =
+            !link.external &&
+            link.match &&
+            link.match.some((m) => (m === "/" ? path === "/" : path.startsWith(m)));
+          return (
+            <a
+              href={link.href}
+              target={link.external ? "_blank" : undefined}
+              rel={link.external ? "noopener" : undefined}
+              class={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                active ? "" : "muted hover:text-[var(--fg)]"
+              }`}
+              style={active ? "background: color-mix(in oklab, var(--accent) 14%, transparent); color: var(--accent-strong);" : ""}
+            >
+              {link.label}
+              {link.external && (
+                <svg class="inline-block ml-1 opacity-60" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10" /></svg>
+              )}
+            </a>
+          );
+        })
+      }
+    </nav>
+    <div class="flex items-center gap-2">
+      <ThemeToggle />
+      <button
+        id="nav-toggle"
+        class="md:hidden btn !px-3 !py-2"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" /></svg>
+      </button>
+    </div>
+  </div>
+  <div id="mobile-menu" class="md:hidden hidden border-t" style="border-color: var(--border);">
+    <div class="container mx-auto max-w-7xl px-4 py-3 flex flex-col gap-1">
+      {
+        links.map((link) => (
+          <a
+            href={link.href}
+            target={link.external ? "_blank" : undefined}
+            rel={link.external ? "noopener" : undefined}
+            class="px-3 py-2 rounded-lg text-sm font-medium muted hover:text-[var(--fg)]"
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</header>
+
+<script>
+  const toggle = document.getElementById("nav-toggle");
+  const menu = document.getElementById("mobile-menu");
+  toggle?.addEventListener("click", () => {
+    const open = menu?.classList.toggle("hidden") === false;
+    toggle.setAttribute("aria-expanded", String(open));
+  });
+</script>

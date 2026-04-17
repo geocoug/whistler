@@ -1,0 +1,151 @@
+---
+// Avalanche Canada bulletin card for the Sea-to-Sky region.
+// Uses the public API; degrades gracefully to a link if it fails.
+---
+
+<section class="surface p-5 sm:p-6" id="avalanche-card">
+  <div class="flex items-start justify-between gap-3 flex-wrap">
+    <div>
+      <div class="text-xs uppercase tracking-widest muted font-display">Avalanche Canada</div>
+      <h2 class="font-display text-2xl font-semibold">Sea-to-Sky Bulletin</h2>
+    </div>
+    <a
+      class="btn !text-xs !py-1.5 !px-3"
+      href="https://avalanche.ca/forecasts/sea-to-sky"
+      target="_blank"
+      rel="noopener"
+    >
+      Full forecast ↗
+    </a>
+  </div>
+  <div class="mt-4 grid grid-cols-1 md:grid-cols-[auto_1fr] gap-5 items-start">
+    <div class="flex items-center gap-3">
+      <span
+        id="av-danger-badge"
+        class="h-16 w-16 rounded-2xl grid place-items-center font-display text-2xl font-semibold skeleton"
+        aria-label="Danger rating"
+      >—</span>
+      <div>
+        <div id="av-rating" class="font-display text-lg font-medium skeleton w-28">—</div>
+        <div id="av-date" class="text-xs muted mt-0.5 skeleton w-36">&nbsp;</div>
+      </div>
+    </div>
+    <div class="space-y-2">
+      <p id="av-headline" class="text-sm leading-relaxed">
+        <span class="skeleton inline-block w-full h-4">&nbsp;</span>
+      </p>
+      <p id="av-summary" class="text-sm muted leading-relaxed">
+        <span class="skeleton inline-block w-full h-4">&nbsp;</span>
+      </p>
+    </div>
+  </div>
+</section>
+
+<script>
+  type ApiRating = { value?: { rating?: { display?: string; value?: string } } };
+  type ApiPayload = {
+    dangerRatings?: Array<ApiRating>;
+    highlights?: string;
+    summaries?: Array<{ type: string; content: string }>;
+    report?: { highlights?: string };
+    forecaster?: string;
+    dateIssued?: string;
+    validUntil?: string;
+  };
+
+  const dangerColor: Record<string, string> = {
+    low: "var(--color-pine-500)",
+    moderate: "#f2c94c",
+    considerable: "var(--color-sunset-500)",
+    high: "#e24040",
+    extreme: "#111",
+    "no rating": "var(--color-night-600)",
+  };
+
+  function stripHtml(html: string) {
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    return (doc.body.textContent ?? "").trim();
+  }
+
+  function setSkeleton(id: string, text: string) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = text;
+    el.classList.remove("skeleton");
+  }
+
+  function renderError() {
+    const badge = document.getElementById("av-danger-badge");
+    if (badge) {
+      badge.textContent = "—";
+      badge.classList.remove("skeleton");
+      badge.style.background = "var(--bg-elev-2)";
+    }
+    setSkeleton("av-rating", "Unavailable");
+    setSkeleton("av-date", "");
+    const head = document.getElementById("av-headline");
+    const sum = document.getElementById("av-summary");
+    if (head) {
+      head.textContent =
+        "We couldn't load the live bulletin. Check Avalanche Canada directly before heading out.";
+      head.querySelector(".skeleton")?.classList.remove("skeleton");
+      head
+        .querySelectorAll<HTMLElement>(".skeleton")
+        .forEach((el) => el.remove());
+    }
+    if (sum) sum.innerHTML = "";
+  }
+
+  async function load() {
+    const url = "https://api.avalanche.ca/forecasts/en/products/sea-to-sky";
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`avalanche api ${res.status}`);
+    const data = (await res.json()) as ApiPayload;
+
+    // Pick the first day's rating (today).
+    const ratingObj = data.dangerRatings?.[0]?.value?.rating;
+    const ratingKey = (ratingObj?.value ?? ratingObj?.display ?? "").toLowerCase();
+    const ratingDisplay = ratingObj?.display ?? "—";
+
+    const badge = document.getElementById("av-danger-badge");
+    if (badge) {
+      badge.textContent = String(ratingDisplay).split(" ")[0] || "—";
+      badge.classList.remove("skeleton");
+      badge.style.background = dangerColor[ratingKey] ?? "var(--accent)";
+      badge.style.color = ["high", "extreme", "considerable"].includes(ratingKey)
+        ? "#fff"
+        : "#04131a";
+    }
+    setSkeleton("av-rating", ratingDisplay);
+
+    const dateIssued = data.dateIssued
+      ? new Date(data.dateIssued).toLocaleString([], {
+          month: "short",
+          day: "numeric",
+          hour: "numeric",
+          minute: "2-digit",
+        })
+      : "";
+    setSkeleton("av-date", dateIssued ? `Issued ${dateIssued}` : "");
+
+    const headline = data.highlights ?? data.report?.highlights ?? "";
+    const summary =
+      data.summaries?.find((s) => /avalanche|summary/i.test(s.type))?.content ?? "";
+
+    const head = document.getElementById("av-headline");
+    if (head) {
+      head.innerHTML = "";
+      head.textContent = headline ? stripHtml(headline) : "";
+    }
+    const sum = document.getElementById("av-summary");
+    if (sum) {
+      sum.innerHTML = "";
+      sum.textContent = summary ? stripHtml(summary).slice(0, 360) + (summary.length > 360 ? "…" : "") : "";
+    }
+  }
+
+  load().catch((err) => {
+    console.warn("[avalanche]", err);
+    renderError();
+  });
+</script>
