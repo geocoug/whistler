@@ -1,6 +1,6 @@
 // Simple offline shell: network-first for everything same-origin,
 // bypass for cross-origin cam/API requests.
-const VERSION = "whistler-v2";
+const VERSION = "whistler-v3";
 const SHELL = ["/", "/travel", "/favicon.ico", "/favicon.svg", "/logo.svg", "/manifest.webmanifest"];
 
 self.addEventListener("install", (event) => {

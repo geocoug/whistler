@@ -41,7 +41,7 @@ document.addEventListener("click", (e) => {
   if (src) {
     inner = `<img src="${src}" alt="${label}" style="width:100%;height:auto;border-radius:1rem;border:1px solid var(--border);" />`;
   } else if (embed) {
-    inner = `<div class="surface-strong overflow-hidden" style="aspect-ratio: 16 / 9;"><iframe src="${embed}" style="width:100%;height:100%;border:0;" allow="autoplay; fullscreen"></iframe></div>`;
+    inner = `<div class="surface-strong overflow-hidden" style="aspect-ratio: 16 / 9;"><iframe src="${embed}" style="width:100%;height:100%;border:0;" allow="autoplay; fullscreen" referrerpolicy="origin"></iframe></div>`;
   } else {
     inner = target.innerHTML;
   }

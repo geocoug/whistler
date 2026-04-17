@@ -105,7 +105,7 @@ import { mountainCams } from "../data/cams";
         </div>
       </header>
       <div class="media">
-        <iframe src="${cam.embedUrl}" loading="lazy" allow="autoplay; fullscreen" title="${cam.name} live cam"></iframe>
+        <iframe src="${cam.embedUrl}" loading="lazy" allow="autoplay; fullscreen" referrerpolicy="origin" title="${cam.name} live cam"></iframe>
       </div>
     `;
     return el;
