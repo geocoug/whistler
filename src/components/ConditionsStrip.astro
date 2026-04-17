@@ -24,25 +24,25 @@
       <div class="text-xs muted" data-c="desc">&nbsp;</div>
     </div>
   </div>
-  <div>
+  <div class="min-w-0">
     <div class="text-xs uppercase tracking-widest muted font-display">New Snow</div>
-    <div class="font-display text-2xl font-semibold"><span data-c="snow" class="skeleton inline-block w-14">—</span></div>
+    <div class="font-display text-xl sm:text-2xl font-semibold whitespace-nowrap"><span data-c="snow" class="skeleton inline-block w-14">—</span></div>
     <div class="text-xs muted">24 hr</div>
   </div>
-  <div>
+  <div class="min-w-0">
     <div class="text-xs uppercase tracking-widest muted font-display">Wind</div>
-    <div class="font-display text-2xl font-semibold"><span data-c="wind" class="skeleton inline-block w-14">—</span></div>
-    <div class="text-xs muted" data-c="winddir">gusts &mdash;</div>
+    <div class="font-display text-xl sm:text-2xl font-semibold whitespace-nowrap"><span data-c="wind" class="skeleton inline-block w-14">—</span></div>
+    <div class="text-xs muted whitespace-nowrap" data-c="winddir">gusts &mdash;</div>
   </div>
-  <div>
+  <div class="min-w-0">
     <div class="text-xs uppercase tracking-widest muted font-display">Freezing Lvl</div>
-    <div class="font-display text-2xl font-semibold"><span data-c="freeze" class="skeleton inline-block w-14">—</span></div>
+    <div class="font-display text-xl sm:text-2xl font-semibold whitespace-nowrap"><span data-c="freeze" class="skeleton inline-block w-14">—</span></div>
     <div class="text-xs muted">m asl</div>
   </div>
-  <div>
+  <div class="min-w-0">
     <div class="text-xs uppercase tracking-widest muted font-display">Sunset</div>
-    <div class="font-display text-2xl font-semibold"><span data-c="sunset" class="skeleton inline-block w-14">—</span></div>
-    <div class="text-xs muted" data-c="sunrise">sunrise &mdash;</div>
+    <div class="font-display text-xl sm:text-2xl font-semibold whitespace-nowrap"><span data-c="sunset" class="skeleton inline-block w-14">—</span></div>
+    <div class="text-xs muted whitespace-nowrap" data-c="sunrise">sunrise &mdash;</div>
   </div>
 </section>
 
@@ -61,11 +61,11 @@
       sunrise: string[];
       sunset: string[];
       snowfall_sum: number[];
-      freezing_level_height: number[];
     };
     hourly?: {
       time: string[];
       snowfall: number[];
+      freezing_level_height: number[];
     };
   };
 
@@ -116,8 +116,8 @@
     const url =
       "https://api.open-meteo.com/v1/forecast?latitude=50.1163&longitude=-122.9574" +
       "&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,wind_gusts_10m,wind_direction_10m,snowfall" +
-      "&daily=sunrise,sunset,snowfall_sum,freezing_level_height" +
-      "&hourly=snowfall&past_days=1&forecast_days=1&timezone=auto&wind_speed_unit=kmh&temperature_unit=celsius&precipitation_unit=inch";
+      "&daily=sunrise,sunset,snowfall_sum" +
+      "&hourly=snowfall,freezing_level_height&past_days=1&forecast_days=1&timezone=auto&wind_speed_unit=kmh&temperature_unit=celsius&precipitation_unit=inch";
     const res = await fetch(url);
     if (!res.ok) throw new Error("weather fetch failed");
     const data = (await res.json()) as Payload;
@@ -148,7 +148,8 @@
       "winddir",
       `${deg(c.wind_direction_10m)} · gust ${Math.round(c.wind_gusts_10m)}`
     );
-    const freeze = data.daily.freezing_level_height?.[0];
+    const freezeArr = data.hourly?.freezing_level_height ?? [];
+    const freeze = freezeArr.length > 0 ? freezeArr[freezeArr.length - 1] : null;
     setText("freeze", freeze != null ? `${Math.round(freeze)} m` : "—");
     const sunrise = data.daily.sunrise?.[0];
     const sunset = data.daily.sunset?.[0];

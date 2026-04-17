@@ -2,6 +2,7 @@ export type WsdotCam = {
   id: string;
   cameraId: number; // WSDOT CameraID
   fallbackTitle: string;
+  imageUrl: string; // Direct image URL (avoids CORS issues with API)
 };
 
 export type DriveBcCam = {
@@ -12,9 +13,9 @@ export type DriveBcCam = {
 };
 
 export const wsdotBorderCams: WsdotCam[] = [
-  { id: "peace", cameraId: 1057, fallbackTitle: "Peace Arch / I-5 Northbound" },
-  { id: "aldergrove", cameraId: 1209, fallbackTitle: "Lynden / SR-539" },
-  { id: "sumas", cameraId: 9445, fallbackTitle: "Sumas / SR-9" },
+  { id: "peace", cameraId: 1057, fallbackTitle: "I-5 at Peace Arch", imageUrl: "https://images.wsdot.wa.gov/nw/005vc27650.jpg" },
+  { id: "aldergrove", cameraId: 1209, fallbackTitle: "SR-539 at Canadian Border", imageUrl: "https://images.wsdot.wa.gov/nw/539vc01510.jpg" },
+  { id: "sumas", cameraId: 9445, fallbackTitle: "SR-9 at Johnson Creek", imageUrl: "https://images.wsdot.wa.gov/nw/009vc09781.jpg" },
 ];
 
 export const driveBcBorderCams: DriveBcCam[] = [

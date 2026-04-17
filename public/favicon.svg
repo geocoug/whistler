@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#4fb6d6"/>
+      <stop offset="100%" stop-color="#1f7fa1"/>
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="6" fill="url(#bg)"/>
+  <!-- Back peak -->
+  <path d="M21 9 L28 24 L14 24 Z" fill="#04131a" opacity="0.2"/>
+  <!-- Main peak -->
+  <path d="M13 7 L5 24 L26 24 Z" fill="#04131a" opacity="0.35"/>
+  <!-- Snow cap -->
+  <path d="M13 7 L10.4 12.5 L11.8 11.5 L13.5 13.5 L15 11.5 L15.6 12.5 Z" fill="#fff"/>
+  <!-- Back snow cap -->
+  <path d="M21 9 L19.2 12.5 L20.4 11.8 L21.5 13 L22.8 12 L23.2 12.5 Z" fill="#fff" opacity="0.8"/>
+</svg>

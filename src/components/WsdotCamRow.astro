@@ -9,16 +9,17 @@ import { wsdotBorderCams } from "../data/borderCams";
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
     {
       wsdotBorderCams.map((cam) => (
-        <article class="cam-tile" data-wsdot-cam data-id={cam.id} data-camera-id={cam.cameraId}>
+        <article class="cam-tile" data-wsdot-cam>
           <header>
             <div class="min-w-0">
-              <div class="truncate" data-title>{cam.fallbackTitle}</div>
+              <div class="truncate">{cam.fallbackTitle}</div>
               <div class="text-[11px] font-normal muted font-sans">WSDOT ID {cam.cameraId}</div>
             </div>
             <button
               class="star-btn"
               type="button"
               data-lightbox
+              data-lightbox-src={cam.imageUrl}
               data-lightbox-title={cam.fallbackTitle}
               aria-label={`Expand ${cam.fallbackTitle}`}
               title="Expand"
@@ -29,9 +30,13 @@ import { wsdotBorderCams } from "../data/borderCams";
             </button>
           </header>
           <div class="media">
-            <div class="skeleton w-full h-full" data-img>
-              <img style="display:none" alt={cam.fallbackTitle} />
-            </div>
+            <img
+              src={`${cam.imageUrl}?t=0`}
+              data-src={cam.imageUrl}
+              alt={cam.fallbackTitle}
+              referrerpolicy="no-referrer"
+              loading="lazy"
+            />
           </div>
         </article>
       ))
@@ -40,43 +45,13 @@ import { wsdotBorderCams } from "../data/borderCams";
 </section>
 
 <script>
-  import { WSDOT_CAM_URL, WSDOT_KEY } from "../data/borderCams";
-
-  type WsdotResp = { ImageURL?: string; Title?: string };
-
-  async function loadCam(tile: HTMLElement) {
-    const cameraId = Number(tile.dataset.cameraId);
-    if (!cameraId) return;
-    try {
-      const res = await fetch(WSDOT_CAM_URL(cameraId, WSDOT_KEY));
-      if (!res.ok) throw new Error(`wsdot ${res.status}`);
-      const data = (await res.json()) as WsdotResp;
-      if (!data.ImageURL) throw new Error("no image url");
-      const media = tile.querySelector<HTMLElement>(".media");
-      const title = tile.querySelector<HTMLElement>("[data-title]");
-      const lightboxBtn = tile.querySelector<HTMLButtonElement>("button[data-lightbox]");
-      if (title && data.Title) title.textContent = data.Title;
-      if (media) {
-        media.innerHTML = `<img src="${data.ImageURL}?t=${Date.now()}" data-src="${data.ImageURL}" alt="${data.Title ?? ""}" referrerpolicy="no-referrer" loading="lazy" />`;
-      }
-      if (lightboxBtn && data.ImageURL) {
-        lightboxBtn.setAttribute("data-lightbox-src", data.ImageURL);
-        if (data.Title) lightboxBtn.setAttribute("data-lightbox-title", data.Title);
-      }
-      // Auto-refresh
-      setInterval(() => {
-        const img = tile.querySelector<HTMLImageElement>("img");
-        if (!img) return;
-        const base = img.dataset.src ?? img.src.split("?")[0];
-        img.src = `${base}?t=${Date.now()}`;
-      }, 60_000);
-    } catch (err) {
-      console.warn("[wsdot cam]", err);
-      const media = tile.querySelector<HTMLElement>(".media");
-      if (media)
-        media.innerHTML = `<div class="h-full w-full grid place-items-center text-xs muted">Cam unavailable</div>`;
-    }
-  }
-
-  document.querySelectorAll<HTMLElement>("[data-wsdot-cam]").forEach(loadCam);
+  // Auto-refresh WSDOT cam images every 60s
+  document.querySelectorAll<HTMLElement>("[data-wsdot-cam]").forEach((tile) => {
+    setInterval(() => {
+      const img = tile.querySelector<HTMLImageElement>("img");
+      if (!img) return;
+      const base = img.dataset.src ?? img.src.split("?")[0];
+      img.src = `${base}?t=${Date.now()}`;
+    }, 60_000);
+  });
 </script>

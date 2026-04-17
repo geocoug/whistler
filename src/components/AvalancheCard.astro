@@ -18,53 +18,85 @@
       Full forecast ↗
     </a>
   </div>
-  <div class="mt-4 grid grid-cols-1 md:grid-cols-[auto_1fr] gap-5 items-start">
-    <div class="flex items-center gap-3">
-      <span
-        id="av-danger-badge"
-        class="h-16 w-16 rounded-2xl grid place-items-center font-display text-2xl font-semibold skeleton"
-        aria-label="Danger rating"
-      >—</span>
-      <div>
-        <div id="av-rating" class="font-display text-lg font-medium skeleton w-28">—</div>
-        <div id="av-date" class="text-xs muted mt-0.5 skeleton w-36">&nbsp;</div>
-      </div>
+
+  <!-- Danger ratings by elevation -->
+  <div class="mt-4 grid grid-cols-3 gap-3" id="av-ratings-grid">
+    <div class="rounded-xl p-3 text-center skeleton" id="av-alp" style="min-height:4.5rem;">
+      <div class="text-[11px] uppercase tracking-wider font-display opacity-70">Alpine</div>
+      <div class="font-display text-lg font-semibold mt-0.5" data-level>—</div>
     </div>
-    <div class="space-y-2">
-      <p id="av-headline" class="text-sm leading-relaxed">
-        <span class="skeleton inline-block w-full h-4">&nbsp;</span>
-      </p>
-      <p id="av-summary" class="text-sm muted leading-relaxed">
-        <span class="skeleton inline-block w-full h-4">&nbsp;</span>
-      </p>
+    <div class="rounded-xl p-3 text-center skeleton" id="av-tln" style="min-height:4.5rem;">
+      <div class="text-[11px] uppercase tracking-wider font-display opacity-70">Treeline</div>
+      <div class="font-display text-lg font-semibold mt-0.5" data-level>—</div>
     </div>
+    <div class="rounded-xl p-3 text-center skeleton" id="av-btl" style="min-height:4.5rem;">
+      <div class="text-[11px] uppercase tracking-wider font-display opacity-70">Below</div>
+      <div class="font-display text-lg font-semibold mt-0.5" data-level>—</div>
+    </div>
+  </div>
+
+  <!-- Headline + summary -->
+  <div class="mt-4 space-y-2">
+    <div id="av-date" class="text-xs muted skeleton w-36">&nbsp;</div>
+    <p id="av-headline" class="text-sm font-medium leading-relaxed">
+      <span class="skeleton inline-block w-full h-4">&nbsp;</span>
+    </p>
+    <p id="av-summary" class="text-sm muted leading-relaxed">
+      <span class="skeleton inline-block w-full h-4">&nbsp;</span>
+    </p>
   </div>
 </section>
 
 <script>
-  type ApiRating = { value?: { rating?: { display?: string; value?: string } } };
+  type ApiRating = {
+    date?: { value?: string; display?: string };
+    ratings?: {
+      alp?: { display?: string; rating?: { value?: string; display?: string } };
+      tln?: { display?: string; rating?: { value?: string; display?: string } };
+      btl?: { display?: string; rating?: { value?: string; display?: string } };
+    };
+  };
   type ApiPayload = {
     dangerRatings?: Array<ApiRating>;
-    highlights?: string;
-    summaries?: Array<{ type: string; content: string }>;
-    report?: { highlights?: string };
-    forecaster?: string;
-    dateIssued?: string;
-    validUntil?: string;
+    report?: {
+      highlights?: string;
+      summaries?: Array<{ type: { value?: string; display?: string }; content: string }>;
+      dateIssued?: string;
+    };
   };
 
-  const dangerColor: Record<string, string> = {
-    low: "var(--color-pine-500)",
-    moderate: "#f2c94c",
-    considerable: "var(--color-sunset-500)",
-    high: "#e24040",
-    extreme: "#111",
-    "no rating": "var(--color-night-600)",
+  const dangerColor: Record<string, { bg: string; text: string }> = {
+    low: { bg: "var(--color-pine-500)", text: "#04131a" },
+    moderate: { bg: "#f2c94c", text: "#04131a" },
+    considerable: { bg: "var(--color-sunset-500)", text: "#fff" },
+    high: { bg: "#e24040", text: "#fff" },
+    extreme: { bg: "#111", text: "#fff" },
   };
 
   function stripHtml(html: string) {
     const doc = new DOMParser().parseFromString(html, "text/html");
     return (doc.body.textContent ?? "").trim();
+  }
+
+  function dangerLabel(value: string | undefined): string {
+    if (!value) return "—";
+    // value is like "moderate" or display is like "2 - Moderate"
+    return value.charAt(0).toUpperCase() + value.slice(1);
+  }
+
+  function setRatingBand(elId: string, rating?: { value?: string; display?: string }) {
+    const el = document.getElementById(elId);
+    if (!el) return;
+    const key = (rating?.value ?? "").toLowerCase();
+    const label = dangerLabel(key);
+    const colors = dangerColor[key] ?? { bg: "var(--bg-elev-2)", text: "var(--fg)" };
+
+    el.style.background = colors.bg;
+    el.style.color = colors.text;
+    el.classList.remove("skeleton");
+
+    const levelEl = el.querySelector("[data-level]");
+    if (levelEl) levelEl.textContent = label;
   }
 
   function setSkeleton(id: string, text: string) {
@@ -75,51 +107,40 @@
   }
 
   function renderError() {
-    const badge = document.getElementById("av-danger-badge");
-    if (badge) {
-      badge.textContent = "—";
-      badge.classList.remove("skeleton");
-      badge.style.background = "var(--bg-elev-2)";
-    }
-    setSkeleton("av-rating", "Unavailable");
+    ["av-alp", "av-tln", "av-btl"].forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.classList.remove("skeleton");
+        el.style.background = "var(--bg-elev-2)";
+      }
+    });
     setSkeleton("av-date", "");
     const head = document.getElementById("av-headline");
-    const sum = document.getElementById("av-summary");
     if (head) {
+      head.innerHTML = "";
       head.textContent =
         "We couldn't load the live bulletin. Check Avalanche Canada directly before heading out.";
-      head.querySelector(".skeleton")?.classList.remove("skeleton");
-      head
-        .querySelectorAll<HTMLElement>(".skeleton")
-        .forEach((el) => el.remove());
     }
+    const sum = document.getElementById("av-summary");
     if (sum) sum.innerHTML = "";
   }
 
   async function load() {
-    const url = "https://api.avalanche.ca/forecasts/en/products/sea-to-sky";
+    const url =
+      "https://api.avalanche.ca/forecasts/en/products/348f8674-63fc-4863-98c3-4caa1c25656d_7b481d084742506edf5d3e899c3e75fb0e0262cdc3a243efe86d6b1ba8eeeba8";
     const res = await fetch(url);
     if (!res.ok) throw new Error(`avalanche api ${res.status}`);
     const data = (await res.json()) as ApiPayload;
 
-    // Pick the first day's rating (today).
-    const ratingObj = data.dangerRatings?.[0]?.value?.rating;
-    const ratingKey = (ratingObj?.value ?? ratingObj?.display ?? "").toLowerCase();
-    const ratingDisplay = ratingObj?.display ?? "—";
+    // Set danger ratings for each elevation band (today = first entry)
+    const today = data.dangerRatings?.[0]?.ratings;
+    setRatingBand("av-alp", today?.alp?.rating);
+    setRatingBand("av-tln", today?.tln?.rating);
+    setRatingBand("av-btl", today?.btl?.rating);
 
-    const badge = document.getElementById("av-danger-badge");
-    if (badge) {
-      badge.textContent = String(ratingDisplay).split(" ")[0] || "—";
-      badge.classList.remove("skeleton");
-      badge.style.background = dangerColor[ratingKey] ?? "var(--accent)";
-      badge.style.color = ["high", "extreme", "considerable"].includes(ratingKey)
-        ? "#fff"
-        : "#04131a";
-    }
-    setSkeleton("av-rating", ratingDisplay);
-
-    const dateIssued = data.dateIssued
-      ? new Date(data.dateIssued).toLocaleString([], {
+    // Date
+    const dateIssued = data.report?.dateIssued
+      ? new Date(data.report.dateIssued).toLocaleString([], {
           month: "short",
           day: "numeric",
           hour: "numeric",
@@ -128,19 +149,21 @@
       : "";
     setSkeleton("av-date", dateIssued ? `Issued ${dateIssued}` : "");
 
-    const headline = data.highlights ?? data.report?.highlights ?? "";
-    const summary =
-      data.summaries?.find((s) => /avalanche|summary/i.test(s.type))?.content ?? "";
-
+    // Highlights
+    const headline = data.report?.highlights ?? "";
     const head = document.getElementById("av-headline");
     if (head) {
       head.innerHTML = "";
       head.textContent = headline ? stripHtml(headline) : "";
     }
+
+    // Avalanche summary
+    const summary =
+      data.report?.summaries?.find((s) => /avalanche|summary/i.test(s.type?.value ?? ""))?.content ?? "";
     const sum = document.getElementById("av-summary");
     if (sum) {
       sum.innerHTML = "";
-      sum.textContent = summary ? stripHtml(summary).slice(0, 360) + (summary.length > 360 ? "…" : "") : "";
+      sum.textContent = summary ? stripHtml(summary) : "";
     }
   }
 

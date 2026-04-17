@@ -33,7 +33,7 @@
 </section>
 
 <script>
-  import { WSDOT_BORDER_URL, WSDOT_KEY } from "../data/borderCams";
+  import { WSDOT_KEY } from "../data/borderCams";
 
   type Row = {
     CrossingName: string;
@@ -64,10 +64,7 @@
     return age > 0 ? `updated ${age} min ago` : "just updated";
   }
 
-  async function load() {
-    const res = await fetch(WSDOT_BORDER_URL(WSDOT_KEY));
-    if (!res.ok) throw new Error("border fetch failed");
-    const rows = (await res.json()) as Row[];
+  function renderRows(rows: Row[]) {
     const matching = rows.filter((r) => r.CrossingName in crossings);
     const tbody = document.getElementById("border-body");
     if (!tbody) return;
@@ -102,12 +99,51 @@
     if (pill) pill.textContent = updated || "live";
   }
 
-  load().catch((err) => {
-    console.warn("[border]", err);
+  function showError() {
     const tbody = document.getElementById("border-body");
     if (tbody)
-      tbody.innerHTML = `<tr><td colspan="3" class="muted text-sm text-center py-6">Couldn't reach WSDOT. <a class="underline" href="https://wsdot.com/travel/real-time/map" target="_blank" rel="noopener">Open WSDOT map ↗</a></td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="3" class="muted text-sm text-center py-6">Live wait times unavailable. <a class="underline" href="https://wsdot.com/travel/real-time/border-crossings" target="_blank" rel="noopener">Check WSDOT ↗</a></td></tr>`;
     const pill = document.getElementById("border-updated");
     if (pill) pill.textContent = "offline";
-  });
+  }
+
+  // Use JSONP to bypass CORS (WSDOT API supports ?callback=fn)
+  (function loadViaJsonp() {
+    const cbName = "_wsdotBorderCb_" + Math.random().toString(36).slice(2);
+    const TIMEOUT_MS = 10000;
+
+    const timer = setTimeout(() => {
+      cleanup();
+      console.warn("[border] JSONP request timed out");
+      showError();
+    }, TIMEOUT_MS);
+
+    (window as any)[cbName] = (data: Row[]) => {
+      cleanup();
+      try {
+        renderRows(data);
+      } catch (err) {
+        console.warn("[border]", err);
+        showError();
+      }
+    };
+
+    const script = document.createElement("script");
+    script.src =
+      `https://wsdot.wa.gov/Traffic/api/BorderCrossings/BorderCrossingsREST.svc/GetBorderCrossingsAsJson?AccessCode=${WSDOT_KEY}&callback=${cbName}`;
+
+    script.onerror = () => {
+      cleanup();
+      console.warn("[border] JSONP script load failed");
+      showError();
+    };
+
+    function cleanup() {
+      clearTimeout(timer);
+      delete (window as any)[cbName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+    }
+
+    document.head.appendChild(script);
+  })();
 </script>
